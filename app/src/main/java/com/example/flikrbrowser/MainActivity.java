@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GetRawData.OnDownloadComplete {
     private static final String TAG = "MainActivity";
 
     @Override
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        GetRawData getRawData = new GetRawData();
+        GetRawData getRawData = new GetRawData(this);
         getRawData.execute("https://www.flickr.com/services/feeds/photos_public.gne?tags=android&format=json");
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -60,5 +60,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onDownloadComplete(String c, DownloadStatus status) {
+        if (status == DownloadStatus.OK) {
+            Log.d(TAG, "onDownloadComplete: downloaded");
+        } else {
+            Log.d(TAG, "onDownloadComplete: failed to download");
+        }
     }
 }

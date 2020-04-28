@@ -22,21 +22,23 @@ public class GetRawData extends AsyncTask<String, Void, String>{
     private static final String TAG = "GetRawData";
 
     private DownloadStatus mDownloadStatus;
+    private final OnDownloadComplete mCallback;
 
-    public GetRawData() {
+    interface OnDownloadComplete {
+        void onDownloadComplete(String c, DownloadStatus status);
+    }
+
+    public GetRawData(OnDownloadComplete callback) {
         mDownloadStatus = DownloadStatus.IDLE;
+        mCallback = callback;
+
     }
 
     @Override
     protected void onPostExecute(String s) {
-        Log.d(TAG, "onPostExecute: parameter " + s);
-
-        try {
-            JSONObject jsonObject = new JSONObject(s);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+       if (mCallback != null) {
+           mCallback.onDownloadComplete(s, mDownloadStatus);
+       }
     }
 
     @Override
