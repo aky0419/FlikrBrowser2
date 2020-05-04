@@ -28,6 +28,12 @@ public class GetRawData extends AsyncTask<String, Void, String>{
         void onDownloadComplete(String c, DownloadStatus status);
     }
 
+    public void runInSameThread(String s) {
+        if (mCallback != null) {
+            mCallback.onDownloadComplete(doInBackground(s), mDownloadStatus);
+        }
+    }
+
     public GetRawData(OnDownloadComplete callback) {
         mDownloadStatus = DownloadStatus.IDLE;
         mCallback = callback;

@@ -1,5 +1,6 @@
 package com.example.flikrbrowser;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -7,14 +8,25 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 
-public class MainActivity extends AppCompatActivity implements GetRawData.OnDownloadComplete {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements GetFlickrJsonData.OnDataAvailable {
     private static final String TAG = "MainActivity";
+    private FlickrRecyclerViewAdapter mFlickrRecyclerViewAdapter;
+    private List<Photo> mPhotoList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +35,10 @@ public class MainActivity extends AppCompatActivity implements GetRawData.OnDown
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        GetRawData getRawData = new GetRawData(this);
-        getRawData.execute("https://www.flickr.com/services/feeds/photos_public.gne?tags=android&format=json");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mFlickrRecyclerViewAdapter = new FlickrRecyclerViewAdapter(mPhotoList, this);
+        recyclerView.setAdapter(mFlickrRecyclerViewAdapter);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -39,6 +52,14 @@ public class MainActivity extends AppCompatActivity implements GetRawData.OnDown
         Log.d(TAG, "onCreate: ends");
     }
 
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume: starts");
+        super.onResume();
+        GetFlickrJsonData getFlickrJsonData = new GetFlickrJsonData("https://www.flickr.com/services/feeds/photos_public.gne","en-us", true, this);
+        getFlickrJsonData.execute("android,nougat");
+        Log.d(TAG, "onResume: ends");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -62,12 +83,18 @@ public class MainActivity extends AppCompatActivity implements GetRawData.OnDown
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public void onDownloadComplete(String c, DownloadStatus status) {
+    public void OnDataAvailable(List<Photo> data, DownloadStatus status) {
+
+        
         if (status == DownloadStatus.OK) {
-            Log.d(TAG, "onDownloadComplete: downloaded");
+            mFlickrRecyclerViewAdapter.loadNewData(data);
+            Log.d(TAG, "OnDataAvailable: downloaded");
         } else {
-            Log.d(TAG, "onDownloadComplete: failed to download");
+            Log.d(TAG, "OnDataAvailable: failed to download");
         }
+
+        Log.d(TAG, "OnDataAvailable: ends");
     }
 }
