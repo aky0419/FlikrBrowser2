@@ -23,7 +23,8 @@ import android.widget.ListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GetFlickrJsonData.OnDataAvailable {
+public class MainActivity extends AppCompatActivity implements GetFlickrJsonData.OnDataAvailable,
+                                                                RecyclerItemClickListener.OnRecyclerClickListener{
     private static final String TAG = "MainActivity";
     private FlickrRecyclerViewAdapter mFlickrRecyclerViewAdapter;
     private List<Photo> mPhotoList=new ArrayList<>();
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements GetFlickrJsonData
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(MainActivity.this, recyclerView,this));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mFlickrRecyclerViewAdapter = new FlickrRecyclerViewAdapter(mPhotoList, this);
         recyclerView.setAdapter(mFlickrRecyclerViewAdapter);
@@ -96,5 +98,15 @@ public class MainActivity extends AppCompatActivity implements GetFlickrJsonData
         }
 
         Log.d(TAG, "OnDataAvailable: ends");
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+
+    }
+
+    @Override
+    public void onItemLongClick(View view, int position) {
+
     }
 }

@@ -33,7 +33,15 @@ class FlickrRecyclerViewAdapter extends RecyclerView.Adapter<FlickrRecyclerViewA
         // called by layout manager when it needs a new view
         Log.d(TAG, "onCreateViewHolder: new view requested");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.browse, parent,false);
-        return new FlickrImageViewHolder(view);
+      FlickrImageViewHolder holder = new  FlickrImageViewHolder(view);
+//      holder.itemView.setOnClickListener(new View.OnClickListener() {
+//          @Override
+//          public void onClick(View v) {
+//              Log.d(TAG, "onClick: starts");
+//          }
+//      });
+      return holder;
+
     }
 
     @Override
@@ -46,6 +54,7 @@ class FlickrRecyclerViewAdapter extends RecyclerView.Adapter<FlickrRecyclerViewA
                 .placeholder(R.drawable.ic_crop_original_black_24dp)
                 .error(R.drawable.ic_crop_original_black_24dp)
                 .into(holder.photo);
+
 
     }
 
