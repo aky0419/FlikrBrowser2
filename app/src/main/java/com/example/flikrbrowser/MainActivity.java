@@ -1,5 +1,6 @@
 package com.example.flikrbrowser;
 
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 
@@ -23,7 +24,7 @@ import android.widget.ListAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements GetFlickrJsonData.OnDataAvailable,
+public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDataAvailable,
                                                                 RecyclerItemClickListener.OnRecyclerClickListener{
     private static final String TAG = "MainActivity";
     private FlickrRecyclerViewAdapter mFlickrRecyclerViewAdapter;
@@ -34,22 +35,12 @@ public class MainActivity extends AppCompatActivity implements GetFlickrJsonData
         Log.d(TAG, "onCreate: starts");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        activateToolbar(false);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(MainActivity.this, recyclerView,this));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mFlickrRecyclerViewAdapter = new FlickrRecyclerViewAdapter(mPhotoList, this);
         recyclerView.setAdapter(mFlickrRecyclerViewAdapter);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         Log.d(TAG, "onCreate: ends");
     }
@@ -102,11 +93,18 @@ public class MainActivity extends AppCompatActivity implements GetFlickrJsonData
 
     @Override
     public void onItemClick(View view, int position) {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
+
 
     }
 
     @Override
     public void onItemLongClick(View view, int position) {
+
+        Intent intent = new Intent(this, PhotoDetailActivity.class);
+        intent.putExtra(PHOTO_TRANSFER, mFlickrRecyclerViewAdapter.getPhoto(position));
+        startActivity(intent);
 
     }
 }
