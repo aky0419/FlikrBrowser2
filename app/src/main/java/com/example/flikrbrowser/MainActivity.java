@@ -1,6 +1,7 @@
 package com.example.flikrbrowser;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 
@@ -49,8 +50,14 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
     protected void onResume() {
         Log.d(TAG, "onResume: starts");
         super.onResume();
-        GetFlickrJsonData getFlickrJsonData = new GetFlickrJsonData("https://www.flickr.com/services/feeds/photos_public.gne","en-us", true, this);
-        getFlickrJsonData.execute("android,nougat");
+
+        SharedPreferences sharedPreferences = getSharedPreferences("MySharePref", MODE_PRIVATE);
+        String query = sharedPreferences.getString(FLICKR_QUERY, "");
+        if (query.length()>0) {
+            GetFlickrJsonData getFlickrJsonData = new GetFlickrJsonData("https://www.flickr.com/services/feeds/photos_public.gne","en-us", true, this);
+            getFlickrJsonData.execute(query);
+        }
+
         Log.d(TAG, "onResume: ends");
     }
 
@@ -70,6 +77,11 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -93,8 +105,7 @@ public class MainActivity extends BaseActivity implements GetFlickrJsonData.OnDa
 
     @Override
     public void onItemClick(View view, int position) {
-        Intent intent = new Intent(this, SearchActivity.class);
-        startActivity(intent);
+
 
 
     }
